@@ -5,9 +5,9 @@ function App() {
   return (
     <div className="container">
       <h1>Lab 1</h1>
-          <Task title = "Gaming" deadline = "ASAP"> Do some gaming</Task>
-          <Task title = "Tidy" deadline = "Tomorrow or the day after idk"> Clean up the house</Task>
-          <Task title = "Dishes" deadline = "When I feel like it"> Do the dishes</Task>
+          <Task title = "Gaming" deadline = "ASAP" desc = "Do some gaming"></Task>
+          <Task title = "Tidy" deadline = "Tomorrow or the day after idk" desc = "Clean up the house"></Task>
+          <Task title = "Dishes" deadline = "When I feel like it" desc = "Do the dishes"></Task>
     </div>
   );
 }
