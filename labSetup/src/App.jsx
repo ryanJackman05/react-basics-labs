@@ -20,6 +20,7 @@ function App() {
         title={task.title}
         description={task.description}
         deadline={task.deadline}
+        key={task.id}
         />
       ))} 
 
