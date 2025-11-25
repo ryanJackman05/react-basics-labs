@@ -12,11 +12,17 @@ function App() {
     ]
   });
   const doneHandler = (taskIndex) => {
-    const tasks = [...taskState.tasks];
-    tasks[taskIndex].done = !tasks[taskIndex].done;
+    const tasks = [...taskState.tasks]; // spread operator reads taskState.tasks as a whole array
+    tasks[taskIndex].done = !tasks[taskIndex].done; // flip bool state of the one task
     setTaskState({tasks});
     console.log(`${taskIndex} ${tasks[taskIndex].done}`);
   }
+  const deleteHandler = (taskIndex) => {
+    const tasks = [...taskState.tasks]; // spread operator reads taskState.tasks as a whole array
+    tasks.splice(taskIndex, 1);
+    setTaskState({tasks}); // assign new tasks object to taskState
+  } 
+
   return (
     <div className="container">
       <h1>Tasky</h1>
@@ -28,7 +34,8 @@ function App() {
         priority={task.priority}
         key={task.id}
         done={task.done}
-        markDone={() => doneHandler(index)}
+        markDone={() => doneHandler(index)} // pass in methods as parameters. It just works.
+        deleteTask = {() => deleteHandler(index)}
         />
       ))} 
 
