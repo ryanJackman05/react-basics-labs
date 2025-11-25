@@ -1,6 +1,7 @@
 import './App.css';
 import Task from './components/Task';
 import React, { useState } from 'react';
+import AddTaskForm from './components/Form';
 
 
 function App() {
@@ -37,7 +38,8 @@ function App() {
         markDone={() => doneHandler(index)} // pass in methods as parameters. It just works.
         deleteTask = {() => deleteHandler(index)}
         />
-      ))} 
+      ))}
+      <AddTaskForm />
 
     </div>
   );
