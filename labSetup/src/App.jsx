@@ -1,23 +1,27 @@
 import './App.css';
 import Task from './components/Task';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AddTaskForm from './components/Form';
 import { v4 as uuidv4 } from 'uuid';
+import {getTasks, addTask, deleteTask, updateTask} from "./api/tasky-api";
 
 
 function App() {
-  const [ taskState, setTaskState ] = useState({
-    tasks: [
-      { id:1, title:"Dishes", description: "Empty dishwasher", deadline: "Today", priority:"Medium", done:false},
-      { id:2, title: "Laundry", description: "Fold clothes and put away", deadline: "Tomorrow", priority:"High", done:false},
-      { id:3, title: "Tidy up", deadline: "Today", priority:"Low", done:false}
-    ]
-  });
+  const [ taskState, setTaskState ] = useState({tasks: []});
+  
+  useEffect(() => {
+    getTasks().then(tasks => {
+      setTaskState({tasks: tasks});
+    });
+  }, []);
+
   const [ formState, setFormState ] = useState({
     title: "",
     description: "",
-    deadline: ""
-  });
+    deadline: "",
+    priority: "Low"
+  }); // default values for form
+
 
   const formChangeHandler = (event) => {
     let form = {...formState}; // spread operator makes a copy
@@ -42,27 +46,31 @@ function App() {
     console.log(formState);
   }
   const doneHandler = (taskIndex) => {
-    const tasks = [...taskState.tasks]; // spread operator reads and copies the array object, rather than a reference.
-    tasks[taskIndex].done = !tasks[taskIndex].done; // flip bool state of the one task
+    const tasks = [...taskState.tasks];
+    tasks[taskIndex].done = !tasks[taskIndex].done;
+    updateTask(tasks[taskIndex]); // API - update task.
     setTaskState({tasks});
-    console.log(`${taskIndex} ${tasks[taskIndex].done}`);
   }
   const deleteHandler = (taskIndex) => {
     const tasks = [...taskState.tasks]; // spread operator reads taskState.tasks as a whole array
+    const id=tasks[taskIndex]._id;
     tasks.splice(taskIndex, 1);
+    deleteTask(id); // API - delete task
     setTaskState({tasks}); // assign new tasks object to taskState
   }
-  const formSubmitHandler = (event) => { // event parameter -> refer to Form.jsx form
+
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    const tasks = [...taskState.tasks]; // new tasks duplicate
-    const form = {...formState}; // new form duplicate
-
-    form.id = uuidv4();
+    const tasks = taskState.tasks?[...taskState.tasks]:[]; // tasks may be empty
+    const form = {...formState};
     
-    tasks.push(form); // add contents of current form to the front of tasks array.
-    setTaskState({tasks}); // set new tasks
+    const newTask = await addTask(form); // addtask from API. Waits until posted successfully
+    // why is this the only one that waits?
+    tasks.push(newTask); // update local task list
+    setTaskState({tasks});
   }
+
 
   return (
     <div className="container">
@@ -73,7 +81,7 @@ function App() {
         description={task.description}
         deadline={task.deadline}
         priority={task.priority}
-        key={task.id}
+        key={task._id}        
         done={task.done}
         markDone={() => doneHandler(index)} // pass in methods as parameters. It just works.
         deleteTask = {() => deleteHandler(index)}
